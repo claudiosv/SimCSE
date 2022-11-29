@@ -292,6 +292,7 @@ def main():
             "Use --overwrite_output_dir to overcome."
         )
 
+    print(training_args.optim)
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
