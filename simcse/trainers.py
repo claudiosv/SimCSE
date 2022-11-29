@@ -352,7 +352,8 @@ class CLTrainer(Trainer):
         self.state.is_hyper_param_search = trial is not None
 
         # Check if saved optimizer or scheduler states exist
-        self._load_optimizer_and_scheduler(model_path)
+        # self._load_optimizer_and_scheduler(model_path)
+        self.create_optimizer_and_scheduler(num_training_steps=max_steps)
 
         model = self.model_wrapped
 
