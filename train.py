@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Union, List, Dict, Tuple
 import torch
 
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 import transformers
 from transformers import (
@@ -328,21 +328,23 @@ def main():
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    data_files = {}
-    if data_args.train_file is not None:
-        data_files["train"] = data_args.train_file
-    extension = data_args.train_file.split(".")[-1]
-    if extension == "txt":
-        extension = "text"
-    if extension == "csv":
-        datasets = load_dataset(
-            extension,
-            data_files=data_files,
-            cache_dir="./data/",
-            delimiter="\t" if "tsv" in data_args.train_file else ",",
-        )
-    else:
-        datasets = load_dataset(extension, data_files=data_files, cache_dir="./data/")
+    # data_files = {}
+    # if data_args.train_file is not None:
+    #     data_files["train"] = data_args.train_file
+    # extension = data_args.train_file.split(".")[-1]
+    # if extension == "txt":
+    #     extension = "text"
+    # if extension == "csv":
+    #     datasets = load_dataset(
+    #         extension,
+    #         data_files=data_files,
+    #         cache_dir="./data/",
+    #         delimiter="\t" if "tsv" in data_args.train_file else ",",
+    #     )
+    # else:
+    #     datasets = load_dataset(extension, data_files=data_files, cache_dir="./data/")
+
+    datasets = load_from_disk('/home/claudios/data/traces/datasets/processed/presummer_w_src')
 
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
@@ -426,6 +428,9 @@ def main():
 
     # Prepare features
     column_names = datasets["train"].column_names
+
+    print(column_names)
+    exit()
     sent2_cname = None
     if len(column_names) == 2:
         # Pair datasets
