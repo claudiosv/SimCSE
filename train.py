@@ -272,6 +272,8 @@ def main():
     parser = HfArgumentParser(
         (ModelArguments, DataTrainingArguments, OurTrainingArguments)
     )
+    training_args.optim = "adamw_torch"
+
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
@@ -292,7 +294,6 @@ def main():
             "Use --overwrite_output_dir to overcome."
         )
 
-    print(training_args.optim)
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
