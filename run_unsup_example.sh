@@ -5,7 +5,7 @@
 # about how to use PyTorch's distributed data parallel.
 
 python train.py \
-	--model_name_or_path bert-base-uncased \
+	--model_name_or_path princeton-nlp/sup-simcse-bert-base-uncased \
 	--train_file data/wiki1m_for_simcse.txt \
 	--output_dir result/my-unsup-simcse-bert-base-uncased \
 	--num_train_epochs 1 \
