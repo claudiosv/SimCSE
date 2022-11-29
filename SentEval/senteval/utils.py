@@ -36,7 +36,17 @@ def create_dictionary(sentences):
 
 
 def cosine(u, v):
-    return np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
+    u_norm = np.linalg.norm(u)
+    v_norm = np.linalg.norm(v)
+    uv_dot = np.dot(u, v)
+    result = uv_dot / (u_norm * v_norm)
+    print(u)
+    print(v)
+    print(u_norm)
+    print(v_norm)
+    print(uv_dot)
+    print(result)
+    return result #np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
 
 
 class dotdict(dict):
