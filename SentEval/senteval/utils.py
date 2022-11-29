@@ -21,9 +21,9 @@ def create_dictionary(sentences):
                 words[word] += 1
             else:
                 words[word] = 1
-    words['<s>'] = 1e9 + 4
-    words['</s>'] = 1e9 + 3
-    words['<p>'] = 1e9 + 2
+    words["<s>"] = 1e9 + 4
+    words["</s>"] = 1e9 + 3
+    words["<p>"] = 1e9 + 2
     # words['<UNK>'] = 1e9 + 1
     sorted_words = sorted(words.items(), key=lambda x: -x[1])  # inverse sort
     id2word = []
@@ -40,17 +40,12 @@ def cosine(u, v):
     v_norm = np.linalg.norm(v)
     uv_dot = np.dot(u, v)
     result = uv_dot / (u_norm * v_norm)
-    print(u)
-    print(v)
-    print(u_norm)
-    print(v_norm)
-    print(uv_dot)
-    print(result)
-    return result #np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
+    return result  # np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
 
 
 class dotdict(dict):
-    """ dot.notation access to dictionary attributes """
+    """dot.notation access to dictionary attributes"""
+
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
@@ -64,10 +59,10 @@ def get_optimizer(s):
         - "adagrad,lr=0.1,lr_decay=0.05"
     """
     if "," in s:
-        method = s[:s.find(',')]
+        method = s[: s.find(",")]
         optim_params = {}
-        for x in s[s.find(',') + 1:].split(','):
-            split = x.split('=')
+        for x in s[s.find(",") + 1 :].split(","):
+            split = x.split("=")
             assert len(split) == 2
             assert re.match("^[+-]?(\d+(\.\d*)?|\.\d+)$", split[1]) is not None
             optim_params[split[0]] = float(split[1])
@@ -75,31 +70,33 @@ def get_optimizer(s):
         method = s
         optim_params = {}
 
-    if method == 'adadelta':
+    if method == "adadelta":
         optim_fn = optim.Adadelta
-    elif method == 'adagrad':
+    elif method == "adagrad":
         optim_fn = optim.Adagrad
-    elif method == 'adam':
+    elif method == "adam":
         optim_fn = optim.Adam
-    elif method == 'adamax':
+    elif method == "adamax":
         optim_fn = optim.Adamax
-    elif method == 'asgd':
+    elif method == "asgd":
         optim_fn = optim.ASGD
-    elif method == 'rmsprop':
+    elif method == "rmsprop":
         optim_fn = optim.RMSprop
-    elif method == 'rprop':
+    elif method == "rprop":
         optim_fn = optim.Rprop
-    elif method == 'sgd':
+    elif method == "sgd":
         optim_fn = optim.SGD
-        assert 'lr' in optim_params
+        assert "lr" in optim_params
     else:
         raise Exception('Unknown optimization method: "%s"' % method)
 
     # check that we give good parameters to the optimizer
     expected_args = inspect.getargspec(optim_fn.__init__)[0]
-    assert expected_args[:2] == ['self', 'params']
+    assert expected_args[:2] == ["self", "params"]
     if not all(k in expected_args[2:] for k in optim_params.keys()):
-        raise Exception('Unexpected parameters: expected "%s", got "%s"' % (
-            str(expected_args[2:]), str(optim_params.keys())))
+        raise Exception(
+            'Unexpected parameters: expected "%s", got "%s"'
+            % (str(expected_args[2:]), str(optim_params.keys()))
+        )
 
     return optim_fn, optim_params
