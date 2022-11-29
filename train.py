@@ -272,7 +272,6 @@ def main():
     parser = HfArgumentParser(
         (ModelArguments, DataTrainingArguments, OurTrainingArguments)
     )
-    training_args.optim = "adamw_torch"
 
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
@@ -282,6 +281,8 @@ def main():
         )
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+
+    training_args.optim = "adamw_torch"
 
     if (
         os.path.exists(training_args.output_dir)
