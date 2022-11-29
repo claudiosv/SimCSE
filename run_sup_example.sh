@@ -25,7 +25,6 @@ python -m torch.distributed.launch --nproc_per_node $NUM_GPU --master_port "$POR
 	--max_seq_length 32 \
 	--evaluation_strategy steps \
 	--metric_for_best_model stsb_spearman \
-	--load_best_model_at_end \
 	--eval_steps 125 \
 	--pooler_type cls \
 	--overwrite_output_dir \
