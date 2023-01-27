@@ -22,4 +22,5 @@ python train.py \
 	--do_train \
 	--do_mlm False \
 	--fp16 \
+	--deepspeed \
 	"$@"

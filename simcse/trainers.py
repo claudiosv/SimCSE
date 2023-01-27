@@ -1,4 +1,5 @@
 import collections
+import json
 import math
 import sys
 import os
@@ -102,7 +103,7 @@ class CLTrainer(Trainer):
         }
 
         se = senteval.engine.SE(params, batcher, prepare)
-        tasks = ["STSBenchmark", "SICKRelatedness"]
+        tasks = ["RetrievalCodeBLEU"]#"STSBenchmark", "SICKRelatedness"]
         if eval_senteval_transfer or self.args.eval_transfer:
             tasks = [
                 "STSBenchmark",
@@ -118,14 +119,16 @@ class CLTrainer(Trainer):
         self.model.eval()
         results = se.eval(tasks)
 
-        stsb_spearman = results["STSBenchmark"]["dev"]["spearman"][0]
-        sickr_spearman = results["SICKRelatedness"]["dev"]["spearman"][0]
+        # stsb_spearman = results["STSBenchmark"]["dev"]["spearman"][0]
+        # sickr_spearman = results["SICKRelatedness"]["dev"]["spearman"][0]
 
         metrics = {
-            "eval_stsb_spearman": stsb_spearman,
-            "eval_sickr_spearman": sickr_spearman,
-            "eval_avg_sts": (stsb_spearman + sickr_spearman) / 2,
+            "RetrievalCodeBLEU": results["RetrievalCodeBLEU"]
         }
+        #     "eval_stsb_spearman": stsb_spearman,
+        #     "eval_sickr_spearman": sickr_spearman,
+        #     "eval_avg_sts": (stsb_spearman + sickr_spearman) / 2,
+        # }
         if eval_senteval_transfer or self.args.eval_transfer:
             avg_transfer = 0
             for task in ["MR", "CR", "SUBJ", "MPQA", "SST2", "TREC", "MRPC"]:
@@ -267,6 +270,33 @@ class CLTrainer(Trainer):
             # Maybe delete some older checkpoints.
             if self.is_world_process_zero():
                 self._rotate_checkpoints(use_mtime=True)
+
+            state_dict = torch.load(
+                os.path.join(output_dir, "pytorch_model.bin"), map_location=torch.device("cpu")
+            )
+            new_state_dict = {}
+            for key, param in state_dict.items():
+                # Replace "mlp" to "pooler"
+                if "mlp" in key:
+                    key = key.replace("mlp", "pooler")
+
+                # Delete "bert" or "roberta" prefix
+                if "bert." in key:
+                    key = key.replace("bert.", "")
+                if "roberta." in key:
+                    key = key.replace("roberta.", "")
+
+                new_state_dict[key] = param
+
+            torch.save(new_state_dict, os.path.join(output_dir, "pytorch_model.bin"))
+
+            # Change architectures in config.json
+            config = json.load(open(os.path.join(output_dir, "config.json")))
+            for i in range(len(config["architectures"])):
+                config["architectures"][i] = config["architectures"][i].replace(
+                    "ForCL", "Model"
+                )
+            json.dump(config, open(os.path.join(output_dir, "config.json"), "w"), indent=2)
 
     def train(
         self,

@@ -344,7 +344,7 @@ def main():
     # else:
     #     datasets = load_dataset(extension, data_files=data_files, cache_dir="./data/")
 
-    datasets = load_from_disk('/home/claudios/data/traces/datasets/presummer')
+    datasets = load_from_disk('/home/claudios/data/traces/datasets/presummer_hard_negatives_train_dataset_augmented')
 
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
@@ -431,7 +431,7 @@ def main():
 
     # print(column_names)
     # exit()
-    sent2_cname = None
+    # sent2_cname = None
     # if len(column_names) == 2:
     #     # Pair datasets
     #     sent0_cname = column_names[0]
@@ -448,7 +448,9 @@ def main():
     # else:
     #     raise NotImplementedError
     sent0_cname = "java_calls"
-    sent1_cname = "java_calls"
+    sent1_cname = "sent1_cname"
+    sent2_cname = "sent2_cname"
+
 
     def prepare_features(examples):
         # padding = longest (default)

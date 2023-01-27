@@ -26,6 +26,7 @@ from senteval.sts import (
 from senteval.sst import SSTEval
 from senteval.rank import ImageCaptionRetrievalEval
 from senteval.probing import *
+from senteval.retrieval import RetrievalEval
 
 
 class SE(object):
@@ -84,6 +85,7 @@ class SE(object):
             "SICKRelatedness-finetune",
             "STSBenchmark-finetune",
             "STSBenchmark-fix",
+            "RetrievalCodeBLEU"
         ]
 
     def eval(self, name):
@@ -187,6 +189,9 @@ class SE(object):
             self.evaluation = CoordinationInversionEval(
                 tpath + "/probing", seed=self.params.seed
             )
+        elif name == "RetrievalCodeBLEU":
+            self.evaluation = RetrievalEval(
+                tpath + "/probing", seed=self.params.seed)
 
         self.params.current_task = name
         self.evaluation.do_prepare(self.params, self.prepare)
