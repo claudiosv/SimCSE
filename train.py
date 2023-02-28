@@ -345,8 +345,8 @@ def main():
     # else:
     #     datasets = load_dataset(extension, data_files=data_files, cache_dir="./data/")
 
-    datasets = load_from_disk('/home/claudios/data/traces/datasets/presummer_hard_negatives_train_dataset_augmented')
-
+    master_dataset = load_from_disk('/home/claudios/data/traces/datasets/presummer_hard_negatives_train_dataset_augmented')
+    triples_dataset = load_from_disk('/home/claudios/data/traces/datasets/feb_dedup_hard_negs_1')
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -428,7 +428,7 @@ def main():
     model.resize_token_embeddings(len(tokenizer))
 
     # Prepare features
-    column_names = datasets["train"].column_names
+    # column_names = datasets["train"].column_names
 
     # print(column_names)
     # exit()
@@ -448,9 +448,9 @@ def main():
     #     sent1_cname = column_names[0]
     # else:
     #     raise NotImplementedError
-    sent0_cname = "java_calls"
-    sent1_cname = "sent1_cname"
-    sent2_cname = "sent2_cname"
+    sent0_cname = "sent0_id"
+    sent1_cname = "sent1_id"
+    sent2_cname = "sent2_id"
 
 
     def prepare_features(examples):
@@ -461,23 +461,23 @@ def main():
         #   exceed the max length.
         # padding = max_length (when pad_to_max_length, for pressure test)
         #   All sentences are padded/truncated to data_args.max_seq_length.
-        total = len(examples[sent0_cname])
+        sent0_id = examples["sent0_id"]
+        sent1_id = examples["sent1_id"]
+        sent2_id = examples["sent2_id"]
+        total = len(master_dataset[sent0_id]["java_calls"])
 
         # Avoid "None" fields
-        for idx in range(total):
-            if examples[sent0_cname][idx] is None:
-                examples[sent0_cname][idx] = " "
-            if examples[sent1_cname][idx] is None:
-                examples[sent1_cname][idx] = " "
+        # for idx in range(total):
+        #     if examples[sent0_cname][idx] is None:
+        #         examples[sent0_cname][idx] = " "
+        #     if examples[sent1_cname][idx] is None:
+        #         examples[sent1_cname][idx] = " "
 
-        sentences = examples[sent0_cname] + examples[sent1_cname]
+        sentences = master_dataset[sent0_id]["java_calls"] + master_dataset[sent1_id]["java_calls"]
 
         # If hard negative exists
         if sent2_cname is not None:
-            for idx in range(total):
-                if examples[sent2_cname][idx] is None:
-                    examples[sent2_cname][idx] = " "
-            sentences += examples[sent2_cname]
+            sentences += master_dataset[sent2_id]["java_calls"]
 
         sent_features = tokenizer(
             sentences,
@@ -507,11 +507,11 @@ def main():
         return features
 
     if training_args.do_train:
-        train_dataset = datasets["train"].map(
+        train_dataset = triples_dataset.map(
             prepare_features,
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
-            remove_columns=column_names,
+            remove_columns=triples_dataset.column_names,
             load_from_cache_file=not data_args.overwrite_cache,
         )
 
