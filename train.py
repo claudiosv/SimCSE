@@ -27,7 +27,7 @@ from transformers.tokenization_utils_base import (
 from transformers.trainer_utils import is_main_process
 from transformers.file_utils import (
     cached_property,
-    torch_required,
+    # torch_required,
     is_torch_tpu_available,
 )
 from simcse.models import RobertaForCL, BertForCL
@@ -213,11 +213,12 @@ class OurTrainingArguments(TrainingArguments):
     )
 
     @cached_property
-    @torch_required
+    # @torch_required
     def _setup_devices(self) -> "torch.device":
         logger.info("PyTorch: setting up devices")
         if self.no_cuda:
             device = torch.device("cpu")
+            exit("No cuda")
             self._n_gpu = 0
         elif is_torch_tpu_available():
             import torch_xla.core.xla_model as xm

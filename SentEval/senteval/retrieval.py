@@ -53,6 +53,7 @@ class RetrievalEval(object):
         # for split in self.task_data:
         #     for i, y in enumerate(self.task_data[split]["y"]):
         #         self.task_data[split]["y"][i] = self.tok2label[y]
+        pass
 
     def run(self, params, batcher):
         task_embed = {"train": {}, "dev": {}, "test": {}}
