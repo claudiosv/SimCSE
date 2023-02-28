@@ -6,9 +6,9 @@
 #princeton-nlp/sup-simcse-bert-base-uncased \
 # export CUDA_VISIBLE_DEVICES=2
 python train.py \
-	--model_name_or_path /home/claudios/data/traces/experiments/tracebert_013/checkpoint-79000/ \
+	--model_name_or_path /home/claudios/data/traces/experiments/tracebert_20230216/checkpoint-34500/ \
 	--train_file data/wiki1m_for_simcse.txt \
-	--output_dir result/my-unsup-simcse-bert-base-uncased1 \
+	--output_dir result/my-unsup-simcse-bert-base-uncased2 \
 	--num_train_epochs 10 \
 	--per_device_train_batch_size 64 \
 	--learning_rate 3e-5 \

@@ -345,7 +345,7 @@ def main():
     # else:
     #     datasets = load_dataset(extension, data_files=data_files, cache_dir="./data/")
 
-    master_dataset = load_from_disk('/home/claudios/data/traces/datasets/presummer_hard_negatives_train_dataset_augmented')
+    master_dataset = load_from_disk('/home/claudios/data/traces/datasets/feb_dedup')
     triples_dataset = load_from_disk('/home/claudios/data/traces/datasets/feb_dedup_hard_negs_1')
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
